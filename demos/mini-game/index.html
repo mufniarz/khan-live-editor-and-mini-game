@@ -20,6 +20,9 @@
             padding: 0;
         }
     </style>
+    <script type="text/javascript">
+        //localStorage.removeItem('basket-mini-game');
+    </script>
 </head>
 <body>
     <h1>Live Editor Example</h1>
@@ -46,35 +49,38 @@
 //        outputUrl += "?debugger=true";
 //        useDebugger = true;
 //    }
+    var code
     basket
-        .require({ url: 'mini-game-files/js/app.js', key: 'mini-game' })
+        .require({ url: 'mini-game-files/js/app.js', key: 'mini-game', unique: Math.random(0,1000)})
         .then(function () {
+            //alert(basket.get('mini-game').unique);
+            code = basket.get('mini-game').data;
             // Success
             //alert("Success");
+
+            window.liveEditor = new LiveEditor({
+                el: $("#sample-live-editor"),
+                //code: window.localStorage["test-code"] || "rect(10, 10, 100, 100);",
+                code: code || "Issue Loading Script",
+                width: 400,
+                height: 400,
+                editorHeight: "80%",
+                autoFocus: true,
+                workersDir: "../../build/workers/",
+                externalsDir: "../../build/external/",
+                imagesDir: "../../build/images/",
+                soundsDir: "../../sounds/",
+                execFile: outputUrl,
+                jshintFile: "../../build/external/jshint/jshint.js",
+                useDebugger: useDebugger
+            });
+
         }, function (error) {
             // There was an error fetching the script
             //alert(error);
             //console.log(error);
         });
 
-    var usableCode = basket.get('mini-game').data;
-
-    window.liveEditor = new LiveEditor({
-        el: $("#sample-live-editor"),
-        //code: window.localStorage["test-code"] || "rect(10, 10, 100, 100);",
-        code: usableCode || "Issue Loading Script",
-        width: 400,
-        height: 400,
-        editorHeight: "80%",
-        autoFocus: true,
-        workersDir: "../../build/workers/",
-        externalsDir: "../../build/external/",
-        imagesDir: "../../build/images/",
-        soundsDir: "../../sounds/",
-        execFile: outputUrl,
-        jshintFile: "../../build/external/jshint/jshint.js",
-        useDebugger: useDebugger
-    });
     liveEditor.editor.on("change", function() {
         window.localStorage["test-code"] = liveEditor.editor.text();
     });
